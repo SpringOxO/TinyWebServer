@@ -1,434 +1,429 @@
 #include "webserver.h"
+#include "epoller/epoller.h"
+#include "http/http_conn.h"
+#include "log/log.h"
+#include "threadpool/threadpool.h"
+#include <cerrno>
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+#include <memory>
 
-WebServer::WebServer()
-{
-    //http_conn类对象
-    users = new http_conn[MAX_FD];
+WebServer::WebServer(
+    int port, int trigMode, int timeoutMS, int optLinger,
+    int threadNum, int sqlNum, int sqlPort, const char* sqlUser, 
+    const char* sqlPwd, const char* dbName
+){
+    port_ = port;
+    timeoutMS_ = timeoutMS;
+    optLinger_ = optLinger;
 
-    //root文件夹路径
-    char server_path[200];
-    getcwd(server_path, 200);
-    char root[6] = "/root";
-    m_root = (char *)malloc(strlen(server_path) + strlen(root) + 1);
-    strcpy(m_root, server_path);
-    strcat(m_root, root);
+    // 给httpconn设置全局的网站根目录路径
+    char serverPath[256] = {0};
+    getcwd(serverPath, 256);
+    std::string rootDir = std::string(serverPath) + "/root";
+    HttpConn::srcDir = rootDir;
 
-    //定时器
-    users_timer = new client_data[MAX_FD];
+    // 初始化数据库连接池
+    connection_pool::GetInstance()->init(
+        "localhost", // 默认本地数据库，如果需要可提到参数里
+        sqlUser, 
+        sqlPwd, 
+        dbName, 
+        sqlPort, 
+        sqlNum       // 创建指定数量的 MySQL 连接
+    );
+
+    epoller_ = std::make_unique<Epoller>(); 
+    threadpool_ = std::make_unique<ThreadPool>(threadNum); // 默认配置是8个工作线程
+
+    InitSocket_();
+    InitEventMode_(trigMode);
+    InitRouter_();
+
+    isClose_ = false;
 }
 
-WebServer::~WebServer()
-{
-    close(m_epollfd);
-    close(m_listenfd);
-    close(m_pipefd[1]);
-    close(m_pipefd[0]);
-    delete[] users;
-    delete[] users_timer;
-    delete m_pool;
+WebServer::~WebServer(){
+    isClose_ = true;
+    close(listenFd_); // 关闭监听大门
+    
+    // 释放数据库连接池中的所有 MySQL 真实连接
+    connection_pool::GetInstance()->DestroyPool();
 }
 
-void WebServer::init(int port, string user, string passWord, string databaseName, int log_write, 
-                     int opt_linger, int trigmode, int sql_num, int thread_num, int close_log, int actor_model)
-{
-    m_port = port;
-    m_user = user;
-    m_passWord = passWord;
-    m_databaseName = databaseName;
-    m_sql_num = sql_num;
-    m_thread_num = thread_num;
-    m_log_write = log_write;
-    m_OPT_LINGER = opt_linger;
-    m_TRIGMode = trigmode;
-    m_close_log = close_log;
-    m_actormodel = actor_model;
-}
-
-void WebServer::trig_mode()
-{
-    //LT + LT
-    if (0 == m_TRIGMode)
-    {
-        m_LISTENTrigmode = 0;
-        m_CONNTrigmode = 0;
-    }
-    //LT + ET
-    else if (1 == m_TRIGMode)
-    {
-        m_LISTENTrigmode = 0;
-        m_CONNTrigmode = 1;
-    }
-    //ET + LT
-    else if (2 == m_TRIGMode)
-    {
-        m_LISTENTrigmode = 1;
-        m_CONNTrigmode = 0;
-    }
-    //ET + ET
-    else if (3 == m_TRIGMode)
-    {
-        m_LISTENTrigmode = 1;
-        m_CONNTrigmode = 1;
-    }
-}
-
-void WebServer::log_write()
-{
-    if (0 == m_close_log)
-    {
-        //初始化日志
-        if (1 == m_log_write)
-            Log::get_instance()->init("./ServerLog", m_close_log, 2000, 800000, 800);
-        else
-            Log::get_instance()->init("./ServerLog", m_close_log, 2000, 800000, 0);
-    }
-}
-
-void WebServer::sql_pool()
-{
-    //初始化数据库连接池
-    m_connPool = connection_pool::GetInstance();
-    m_connPool->init("localhost", m_user, m_passWord, m_databaseName, 3306, m_sql_num, m_close_log);
-
-    //初始化数据库读取表
-    users->initmysql_result(m_connPool);
-}
-
-void WebServer::thread_pool()
-{
-    //线程池
-    m_pool = new threadpool<http_conn>(m_actormodel, m_connPool, m_thread_num);
-}
-
-void WebServer::eventListen()
-{
-    //网络编程基础步骤
-    m_listenfd = socket(PF_INET, SOCK_STREAM, 0);
-    assert(m_listenfd >= 0);
-
-    //优雅关闭连接
-    if (0 == m_OPT_LINGER)
-    {
-        struct linger tmp = {0, 1};
-        setsockopt(m_listenfd, SOL_SOCKET, SO_LINGER, &tmp, sizeof(tmp));
-    }
-    else if (1 == m_OPT_LINGER)
-    {
-        struct linger tmp = {1, 1};
-        setsockopt(m_listenfd, SOL_SOCKET, SO_LINGER, &tmp, sizeof(tmp));
-    }
-
-    int ret = 0;
-    struct sockaddr_in address;
-    bzero(&address, sizeof(address));
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = htonl(INADDR_ANY);
-    address.sin_port = htons(m_port);
-
-    int flag = 1;
-    setsockopt(m_listenfd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
-    ret = bind(m_listenfd, (struct sockaddr *)&address, sizeof(address));
-    assert(ret >= 0);
-    ret = listen(m_listenfd, 5);
-    assert(ret >= 0);
-
-    utils.init(TIMESLOT);
-
-    //epoll创建内核事件表
-    epoll_event events[MAX_EVENT_NUMBER];
-    m_epollfd = epoll_create(5);
-    assert(m_epollfd != -1);
-
-    utils.addfd(m_epollfd, m_listenfd, false, m_LISTENTrigmode);
-    http_conn::m_epollfd = m_epollfd;
-
-    ret = socketpair(PF_UNIX, SOCK_STREAM, 0, m_pipefd);
-    assert(ret != -1);
-    utils.setnonblocking(m_pipefd[1]);
-    utils.addfd(m_epollfd, m_pipefd[0], false, 0);
-
-    utils.addsig(SIGPIPE, SIG_IGN);
-    utils.addsig(SIGALRM, utils.sig_handler, false);
-    utils.addsig(SIGTERM, utils.sig_handler, false);
-
-    alarm(TIMESLOT);
-
-    //工具类,信号和描述符基础操作
-    Utils::u_pipefd = m_pipefd;
-    Utils::u_epollfd = m_epollfd;
-}
-
-void WebServer::timer(int connfd, struct sockaddr_in client_address)
-{
-    users[connfd].init(connfd, client_address, m_root, m_CONNTrigmode, m_close_log, m_user, m_passWord, m_databaseName);
-
-    //初始化client_data数据
-    //创建定时器，设置回调函数和超时时间，绑定用户数据，将定时器添加到链表中
-    users_timer[connfd].address = client_address;
-    users_timer[connfd].sockfd = connfd;
-    util_timer *timer = new util_timer;
-    timer->user_data = &users_timer[connfd];
-    timer->cb_func = cb_func;
-    time_t cur = time(NULL);
-    timer->expire = cur + 3 * TIMESLOT;
-    users_timer[connfd].timer = timer;
-    utils.m_timer_lst.add_timer(timer);
-}
-
-//若有数据传输，则将定时器往后延迟3个单位
-//并对新的定时器在链表上的位置进行调整
-void WebServer::adjust_timer(util_timer *timer)
-{
-    time_t cur = time(NULL);
-    timer->expire = cur + 3 * TIMESLOT;
-    utils.m_timer_lst.adjust_timer(timer);
-
-    LOG_INFO("%s", "adjust timer once");
-}
-
-void WebServer::deal_timer(util_timer *timer, int sockfd)
-{
-    timer->cb_func(&users_timer[sockfd]);
-    if (timer)
-    {
-        utils.m_timer_lst.del_timer(timer);
-    }
-
-    LOG_INFO("close fd %d", users_timer[sockfd].sockfd);
-}
-
-bool WebServer::dealclientdata()
-{
-    struct sockaddr_in client_address;
-    socklen_t client_addrlength = sizeof(client_address);
-    if (0 == m_LISTENTrigmode)
-    {
-        int connfd = accept(m_listenfd, (struct sockaddr *)&client_address, &client_addrlength);
-        if (connfd < 0)
-        {
-            LOG_ERROR("%s:errno is:%d", "accept error", errno);
-            return false;
-        }
-        if (http_conn::m_user_count >= MAX_FD)
-        {
-            utils.show_error(connfd, "Internal server busy");
-            LOG_ERROR("%s", "Internal server busy");
-            return false;
-        }
-        timer(connfd, client_address);
-    }
-
-    else
-    {
-        while (1)
-        {
-            int connfd = accept(m_listenfd, (struct sockaddr *)&client_address, &client_addrlength);
-            if (connfd < 0)
-            {
-                LOG_ERROR("%s:errno is:%d", "accept error", errno);
-                break;
+void WebServer::Start(){
+    while (!isClose_){
+        int eventCnt = epoller_->Wait( timeoutMS_);
+        if (eventCnt < 0 && errno != EINTR) { LOG_ERROR("Epoll Error!"); break; }
+        if (eventCnt > 0){
+            for (size_t i = 0; i < eventCnt; i++){
+                int fd = epoller_->GetEventFd(i);
+                auto events = epoller_->GetEvents(i);
+                
+                // 如果是新用户
+                if (fd == listenFd_) {
+                    HandleListen_(); 
+                } 
+                // 如果是异常事件，关闭连接
+                else if (events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
+                    CloseConn_(&users_[fd]);
+                } 
+                // 如果是已连接的客户发来了数据 (读事件)
+                else if (events & EPOLLIN) {
+                    HandleRead_(&users_[fd]); 
+                } 
+                // 如果是可以向客户端发数据了 (写事件)
+                else if (events & EPOLLOUT) {
+                    HandleWrite_(&users_[fd]); 
+                }
             }
-            if (http_conn::m_user_count >= MAX_FD)
-            {
-                utils.show_error(connfd, "Internal server busy");
-                LOG_ERROR("%s", "Internal server busy");
-                break;
-            }
-            timer(connfd, client_address);
         }
+    }
+}
+
+bool WebServer::InitSocket_() {
+    // 1. 创建 TCP 监听 Socket
+    listenFd_ = socket(AF_INET, SOCK_STREAM, 0);
+    if (listenFd_ < 0) {
+        LOG_ERROR("Create socket error!");
         return false;
     }
+
+    // 2. 优雅关闭连接 (SO_LINGER)
+    struct linger optLinger = {0};
+    if (optLinger_ == 1) { // 优雅退出选项关
+        optLinger.l_onoff = 1;
+        optLinger.l_linger = 1;
+    }
+    setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
+
+    // 3. 端口复用 (极其关键！SO_REUSEADDR)
+    // 作用：防止服务器重启时出现 "Address already in use" 导致无法立即绑定端口
+    int optval = 1;
+    setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
+
+    // 4. 绑定 IP 和端口
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY); // 监听本机所有网卡 IP
+    addr.sin_port = htons(port_);             // 注意转化为网络字节序
+    
+    if (bind(listenFd_, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+        close(listenFd_);
+        LOG_ERROR("Bind socket error!");
+        return false;
+    }
+
+    // 5. 开启监听，维护全连接队列
+    // SOMAXCONN 是系统允许的最大排队数量
+    if (listen(listenFd_, SOMAXCONN) < 0) { // 这里原版写死为 5，重构填入SOMAXCONN
+        close(listenFd_);
+        LOG_ERROR("Listen socket error!");
+        return false;
+    }
+
+    // 6. 核心重构：必须将 ListenFd 设置为非阻塞 (Non-blocking)！
+    // 只要使用了 Epoll 的边缘触发 (ET) 模式，Socket 必须是非阻塞的
+    int flag = fcntl(listenFd_, F_GETFL, 0);
+    fcntl(listenFd_, F_SETFL, flag | O_NONBLOCK);
+
+    // 重要！把listenfd注册到epoller
+    if (!epoller_->AddFd(listenFd_, listenEvent_)) {
+        LOG_ERROR("Add listen error!");
+        close(listenFd_);
+        return false;
+    }
+
+    LOG_INFO("Socket listening...");
     return true;
 }
 
-bool WebServer::dealwithsignal(bool &timeout, bool &stop_server)
-{
-    int ret = 0;
-    int sig;
-    char signals[1024];
-    ret = recv(m_pipefd[0], signals, sizeof(signals), 0);
-    if (ret == -1)
-    {
-        return false;
-    }
-    else if (ret == 0)
-    {
-        return false;
-    }
-    else
-    {
-        for (int i = 0; i < ret; ++i)
-        {
-            switch (signals[i])
-            {
-            case SIGALRM:
-            {
-                timeout = true;
-                break;
-            }
-            case SIGTERM:
-            {
-                stop_server = true;
-                break;
-            }
-            }
-        }
-    }
-    return true;
-}
+void WebServer::InitEventMode_(int trigMode) {
+    // 基础事件：EPOLLIN (可读), EPOLLRDHUP (TCP 底层断开事件)
+    listenEvent_ = EPOLLIN | EPOLLRDHUP;
+    // 连接事件必须加上 EPOLLONESHOT！保证同一个 HttpConn 永远不会被两个线程同时处理！
+    connEvent_ = EPOLLIN | EPOLLONESHOT | EPOLLRDHUP; 
 
-void WebServer::dealwithread(int sockfd)
-{
-    util_timer *timer = users_timer[sockfd].timer;
-
-    //reactor
-    if (1 == m_actormodel)
-    {
-        if (timer)
-        {
-            adjust_timer(timer);
-        }
-
-        //若监测到读事件，将该事件放入请求队列
-        m_pool->append(users + sockfd, 0);
-
-        while (true)
-        {
-            if (1 == users[sockfd].improv)
-            {
-                if (1 == users[sockfd].timer_flag)
-                {
-                    deal_timer(timer, sockfd);
-                    users[sockfd].timer_flag = 0;
-                }
-                users[sockfd].improv = 0;
-                break;
-            }
-        }
-    }
-    else
-    {
-        //proactor
-        if (users[sockfd].read_once())
-        {
-            LOG_INFO("deal with the client(%s)", inet_ntoa(users[sockfd].get_address()->sin_addr));
-
-            //若监测到读事件，将该事件放入请求队列
-            m_pool->append_p(users + sockfd);
-
-            if (timer)
-            {
-                adjust_timer(timer);
-            }
-        }
-        else
-        {
-            deal_timer(timer, sockfd);
-        }
-    }
-}
-
-void WebServer::dealwithwrite(int sockfd)
-{
-    util_timer *timer = users_timer[sockfd].timer;
-    //reactor
-    if (1 == m_actormodel)
-    {
-        if (timer)
-        {
-            adjust_timer(timer);
-        }
-
-        m_pool->append(users + sockfd, 1);
-
-        while (true)
-        {
-            if (1 == users[sockfd].improv)
-            {
-                if (1 == users[sockfd].timer_flag)
-                {
-                    deal_timer(timer, sockfd);
-                    users[sockfd].timer_flag = 0;
-                }
-                users[sockfd].improv = 0;
-                break;
-            }
-        }
-    }
-    else
-    {
-        //proactor
-        if (users[sockfd].write())
-        {
-            LOG_INFO("send data to the client(%s)", inet_ntoa(users[sockfd].get_address()->sin_addr));
-
-            if (timer)
-            {
-                adjust_timer(timer);
-            }
-        }
-        else
-        {
-            deal_timer(timer, sockfd);
-        }
-    }
-}
-
-void WebServer::eventLoop()
-{
-    bool timeout = false;
-    bool stop_server = false;
-
-    while (!stop_server)
-    {
-        int number = epoll_wait(m_epollfd, events, MAX_EVENT_NUMBER, -1);
-        if (number < 0 && errno != EINTR)
-        {
-            LOG_ERROR("%s", "epoll failure");
+    // 根据配置项动态添加边缘触发 (EPOLLET) 属性
+    switch (trigMode) {
+        case 0: // LT + LT
             break;
-        }
-
-        for (int i = 0; i < number; i++)
-        {
-            int sockfd = events[i].data.fd;
-
-            //处理新到的客户连接
-            if (sockfd == m_listenfd)
-            {
-                bool flag = dealclientdata();
-                if (false == flag)
-                    continue;
-            }
-            else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
-            {
-                //服务器端关闭连接，移除对应的定时器
-                util_timer *timer = users_timer[sockfd].timer;
-                deal_timer(timer, sockfd);
-            }
-            //处理信号
-            else if ((sockfd == m_pipefd[0]) && (events[i].events & EPOLLIN))
-            {
-                bool flag = dealwithsignal(timeout, stop_server);
-                if (false == flag)
-                    LOG_ERROR("%s", "dealclientdata failure");
-            }
-            //处理客户连接上接收到的数据
-            else if (events[i].events & EPOLLIN)
-            {
-                dealwithread(sockfd);
-            }
-            else if (events[i].events & EPOLLOUT)
-            {
-                dealwithwrite(sockfd);
-            }
-        }
-        if (timeout)
-        {
-            utils.timer_handler();
-
-            LOG_INFO("%s", "timer tick");
-
-            timeout = false;
-        }
+        case 1: // LT + ET
+            connEvent_ |= EPOLLET;
+            break;
+        case 2: // ET + LT
+            listenEvent_ |= EPOLLET;
+            break;
+        case 3: // ET + ET
+            listenEvent_ |= EPOLLET;
+            connEvent_ |= EPOLLET;
+            break;
+        default: // 默认推荐 ET + ET 极致性能
+            listenEvent_ |= EPOLLET;
+            connEvent_ |= EPOLLET;
+            break;
     }
+
+    // 将最终确定的 ET 模式同步给 HttpConn 的静态变量，
+    // 这样 HttpConn 内部的 Read/Write 就能知道要不要开启 do-while 循环了
+    HttpConn::isET = (connEvent_ & EPOLLET);
+}
+
+void WebServer::InitRouter_() {
+    // // 示例 1：处理用户的登录请求 (POST)
+    // router_.Post("/api/login", [](const HttpRequest& req, HttpResponse& res) {
+    //     // 这里只是演示，实际可以从 SqlConnPool 拿连接去查 MySQL
+    //     std::string user = req.GetPost("user"); 
+    //     std::string pwd = req.GetPost("password");
+        
+    //     if (user == "admin" && pwd == "123456") {
+    //         // 登录成功，返回自定义的纯文本/JSON，而不是静态文件
+    //         res.SetContent("{\"status\":\"success\", \"msg\":\"Welcome!\"}", "application/json");
+    //     } else {
+    //         // 账号密码错误
+    //         res.SetContent("{\"status\":\"error\", \"msg\":\"Invalid login\"}", "application/json");
+    //     }
+    // });
+
+    // // 示例 2：处理注册请求 (POST)
+    // router_.Post("/api/register", [](const HttpRequest& req, HttpResponse& res) {
+    //     // ... 执行插入数据库等逻辑
+    //     res.SetContent("{\"status\":\"success\"}", "application/json");
+    // });
+    
+    // --- 1. 处理用户的登录请求 (POST) ---
+    router_.Post("/api/login", [](const HttpRequest& req, HttpResponse& res) {
+        std::string user = req.GetPost("user"); 
+        std::string pwd = req.GetPost("password");
+        LOG_INFO("Logining %s %s", user.data(), pwd.data());
+        
+        // 基础参数校验
+        if (user.empty() || pwd.empty()) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Empty user or password\"}", "application/json");
+            return;
+        }
+
+        // 🚨 核心并发防线：使用 RAII 机制安全获取数据库连接！
+        // 只要离开这个 Lambda 函数作用域，mysqlcon 析构时就会自动将连接归还给池子
+        MYSQL* sql = nullptr;
+        connectionRAII mysqlcon(sql, connection_pool::GetInstance()); //
+
+        if (!sql) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Database Busy\"}", "application/json");
+            return;
+        }
+
+        // 组装 SQL 查询语句 (查询对应的密码)
+        char query[256] = {0};
+        snprintf(query, 256, "SELECT passwd FROM user WHERE username='%s' LIMIT 1", user.c_str());
+
+        // 执行 SQL 语句
+        if (mysql_query(sql, query)) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Database Query Failed\"}", "application/json");
+            return;
+        }
+
+        // 获取查询结果集
+        MYSQL_RES* resSet = mysql_store_result(sql);
+        if (!resSet) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Empty Result\"}", "application/json");
+            return;
+        }
+
+        bool isLoginSuccess = false;
+        // 提取结果行比对密码
+        if (MYSQL_ROW row = mysql_fetch_row(resSet)) {
+            std::string dbPwd(row[0]); // row[0] 对应 SELECT 语句中的 passwd 字段
+            if (dbPwd == pwd) {
+                isLoginSuccess = true;
+            }
+        }
+        
+        // ⚠️ 极其关键：必须手动释放 MySQL 结果集，否则会导致服务器内存持续泄漏！
+        mysql_free_result(resSet); 
+
+        // 生成最终的响应
+        if (isLoginSuccess) {
+            res.SetContent("{\"status\":\"success\", \"msg\":\"Welcome!\"}", "application/json");
+        } else {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Invalid login\"}", "application/json");
+        }
+    });
+
+
+    // --- 2. 处理用户的注册请求 (POST) ---
+    router_.Post("/api/register", [](const HttpRequest& req, HttpResponse& res) {
+        std::string user = req.GetPost("user"); 
+        std::string pwd = req.GetPost("password");
+        LOG_INFO("Registering %s %s", user.data(), pwd.data());
+
+        if (user.empty() || pwd.empty()) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Empty user or password\"}", "application/json");
+            return;
+        }
+
+        // 同样的 RAII 手法获取连接
+        MYSQL* sql = nullptr;
+        connectionRAII mysqlcon(sql, connection_pool::GetInstance()); //[cite: 3, 4]
+
+        if (!sql) {
+            res.SetContent("{\"status\":\"error\", \"msg\":\"Database Busy\"}", "application/json");
+            return;
+        }
+
+        // 组装 INSERT 语句
+        char query[256] = {0};
+        snprintf(query, 256, "INSERT INTO user(username, passwd) VALUES('%s', '%s')", user.c_str(), pwd.c_str());
+
+        // 执行插入操作
+        if (mysql_query(sql, query)) {
+            // 如果插入失败，通常是因为违反了 username 的 UNIQUE 唯一约束 (用户已存在)
+            res.SetContent("{\"status\":\"error\", \"msg\":\"User already exists\"}", "application/json");
+        } else {
+            res.SetContent("{\"status\":\"success\", \"msg\":\"Register success!\"}", "application/json");
+        }
+    });
+}
+
+void WebServer::HandleListen_() {
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(addr);
+    do {
+        // 1. 调用底层的 accept 函数接客
+        int clientFd = accept(listenFd_, (struct sockaddr*)&addr, &len);
+        
+        if (clientFd <= 0) {
+            // 返回 <= 0，通常是因为 errno == EAGAIN，说明门外没人了，接客完毕，直接退出循环
+            return; 
+        }
+        LOG_INFO("New client fd = %d", clientFd);
+
+        // 2. 满载防御：判断当前在线人数是否超过了系统的极限配置
+        if (HttpConn::userCount >= MAX_FD) {
+            // 给用户回复一个“服务器繁忙”的报错报文 (SendError_ 可自己简单实现)
+            SendError_(clientFd, "Server busy!"); 
+            LOG_WARN("Clients is full!");
+            return;
+        }
+
+        // 3. 核心：为新客人在 unordered_map (或者数组) 中初始化专属的 HttpConn 对象！
+        // clientFd 就是系统分配给这个新用户的唯一桌号
+        users_[clientFd].Init(clientFd, addr);
+
+        // 4. 将新客人的套接字设为非阻塞 (Non-blocking)
+        // 这是使用 Epoll 边缘触发的硬性规定，不加的话读写数据时会被死死卡住
+        int flag = fcntl(clientFd, F_GETFL, 0);
+        fcntl(clientFd, F_SETFL, flag | O_NONBLOCK);
+
+        // 5. 极其关键：把新客人注册到 Epoll 的监听树上！
+        // 这里的 connEvent_ 是我们在 InitEventMode_ 里配好的 (EPOLLIN | EPOLLONESHOT | EPOLLET)
+        epoller_->AddFd(clientFd, connEvent_);
+
+        // 可以在这里加个定时器模块 (Timer)，记录该连接的最后活跃时间，用于剔除死连接
+        // AddTimer(clientFd, timeoutMS_, ...); 
+
+    } while (listenEvent_ & EPOLLET); // 只有开启了 ET 模式，才需要一直循环到 accept 返回 -1
+}
+
+// 只用于把任务送进线程池
+void WebServer::HandleRead_(HttpConn* client) {
+    assert(client);
+
+    LOG_INFO("Client %d requesting", client->GetFd());
+    threadpool_->AddTask([this, client]() {
+        OnRead_(client);
+    });
+}
+
+void WebServer::OnRead_(HttpConn* client) {
+    assert(client);
+
+    int readErrno = 0;
+    
+    // 1. 榨干网卡：调用我们写好的带有 do-while(isET) 的非阻塞读函数
+    ssize_t ret = client->Read(&readErrno);
+    
+    // 2. 客户端断开检测
+    // 如果 ret <= 0，且不是 EAGAIN (网卡缓冲区被榨干)，说明客户端由于各种原因断开了连接
+    if (ret <= 0 && readErrno != EAGAIN) {
+        CloseConn_(client); // 释放内存，将其从 Epoll 树上摘除
+        return;
+    }
+    LOG_INFO("--- [Debug] Read over, start parsing ---");
+
+    if (client->Process(router_)) {
+        // 处理成功，准备写response
+        LOG_INFO("--- [Debug] Process success, triggering EPOLLOUT ---");
+        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
+    } else {
+        // 没读到东西，继续等待
+        LOG_INFO("--- [Debug] Process incomplete, waiting EPOLLIN ---");
+        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLIN);
+    }
+}
+
+void WebServer::HandleWrite_(HttpConn* client) {
+    assert(client);
+
+    LOG_INFO("Responding to client %d", client->GetFd());
+    threadpool_->AddTask([this, client]() {
+        OnWrite_(client);
+    });
+}
+
+void WebServer::OnWrite_(HttpConn* client) {
+    assert(client);
+
+    int writeErrno = 0;
+    ssize_t ret = client->Write(&writeErrno);
+    
+    if (ret <= 0 && writeErrno != EAGAIN){
+        CloseConn_(client); // 释放内存，将其从 Epoll 树上摘除
+        return;
+    }
+
+    if (client->ToWriteBytes() <= 0){
+        // 写完了
+        if (client->IsKeepAlive()) {
+            // 长连接，等待他下一个 HTTP 请求
+            client->ResetForKeepAlive();
+            epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLIN);
+        } else {
+            // 短连接：客人拿完数据就走。服务器主动一脚把他踢开，回收资源！
+            CloseConn_(client);
+        }
+    } else {
+        // 继续写
+        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
+    }
+}
+
+void WebServer::SendError_(int fd, const char* info) {
+    assert(fd > 0);
+    
+    // 1. 组装一个极其轻量级的 HTTP 503 报错报文
+    // 即使是报错，也必须符合 HTTP 协议格式，否则客户端浏览器会一直转圈或报错协议异常
+    std::string buff = "HTTP/1.1 503 Service Unavailable\r\n";
+    buff += "Content-Type: text/plain\r\n";
+    buff += "Connection: close\r\n";
+    buff += "Content-Length: " + std::to_string(strlen(info)) + "\r\n";
+    buff += "\r\n";
+    buff += info;
+
+    // 2. 阻塞发送给内核网卡
+    send(fd, buff.data(), buff.size(), 0);
+    
+    // 🚨 3. 极其致命的保命操作：发送完后，必须立刻 close 归还文件描述符！
+    // 因为这个 fd 根本没有进入我们的 HttpConn 体系，如果这里不关闭，
+    // 服务器的 FD 就会永远泄露，直到报出 "Too many open files" 彻底宕机。
+    close(fd); 
+    
+    LOG_WARN("Client[%d] has been kicked: %s", fd, info);
+}
+
+void WebServer::CloseConn_(HttpConn* client) {
+    assert(client);
+    epoller_->DelFd(client->GetFd());
+    client->Close();
 }

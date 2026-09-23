@@ -1,82 +1,80 @@
 #ifndef WEBSERVER_H
 #define WEBSERVER_H
 
+#include <unordered_map>
+#include <fcntl.h>
+#include <unistd.h>
+#include <assert.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <cassert>
-#include <sys/epoll.h>
+#include <memory>
 
-#include "./threadpool/threadpool.h"
-#include "./http/http_conn.h"
+#include "epoller/epoller.h"       // 假设：封装了 epoll_create/epoll_wait 的现代类
+#include "threadpool/threadpool.h"    // 假设：现代 C++ 实现的线程池
+#include "http/http_conn.h"
+#include "router/router.h"
+#include "CGImysql/sql_connection_pool.h"
+#include "log/log.h"
 
-const int MAX_FD = 65536;           //最大文件描述符
-const int MAX_EVENT_NUMBER = 10000; //最大事件数
-const int TIMESLOT = 5;             //最小超时单位
-
-class WebServer
-{
+class WebServer {
 public:
-    WebServer();
+    // 构造函数：集齐所有配置参数 (端口、触发模式、超时时间、线程数、数据库配置等)
+    WebServer(
+        int port, int trigMode, int timeoutMS, int optLinger,
+        int threadNum, int sqlNum, int sqlPort, const char* sqlUser, 
+        const char* sqlPwd, const char* dbName
+    );
+    
+    // 析构函数：释放端口，关闭 Epoll
     ~WebServer();
 
-    void init(int port , string user, string passWord, string databaseName,
-              int log_write , int opt_linger, int trigmode, int sql_num,
-              int thread_num, int close_log, int actor_model);
+    // ----- 🚦 核心大循环：服务器启动引擎 -----
+    void Start();
 
-    void thread_pool();
-    void sql_pool();
-    void log_write();
-    void trig_mode();
-    void eventListen();
-    void eventLoop();
-    void timer(int connfd, struct sockaddr_in client_address);
-    void adjust_timer(util_timer *timer);
-    void deal_timer(util_timer *timer, int sockfd);
-    bool dealclientdata();
-    bool dealwithsignal(bool& timeout, bool& stop_server);
-    void dealwithread(int sockfd);
-    void dealwithwrite(int sockfd);
+private:
+    // ----- 第一阶段：基建与初始化 -----
+    bool InitSocket_();             // 绑定 IP 和端口，开启监听
+    void InitEventMode_(int trigMode); // 初始化 Epoll 的 ET/LT 触发模式
+    void InitRouter_();             // 在这里用 Lambda 注册所有的 GET/POST 业务路由
 
-public:
-    //基础
-    int m_port;
-    char *m_root;
-    int m_log_write;
-    int m_close_log;
-    int m_actormodel;
+    // ----- 第二阶段：主线程的“派发”逻辑 (交警指挥交通) -----
+    void HandleListen_();           // 雷达发现新连接：执行 accept 并注册到 Epoll
+    void HandleRead_(HttpConn* client);  // 雷达发现可读：将读任务打包扔进线程池
+    void HandleWrite_(HttpConn* client); // 雷达发现可写：将写任务打包扔进线程池
 
-    int m_pipefd[2];
-    int m_epollfd;
-    http_conn *users;
+    // ----- 第三阶段：工作线程的“执行”逻辑 (工人干活) -----
+    // 这些函数是在 ThreadPool 中的子线程里被调用的！
+    void OnRead_(HttpConn* client);
+    void OnWrite_(HttpConn* client);
 
-    //数据库相关
-    connection_pool *m_connPool;
-    string m_user;         //登陆数据库用户名
-    string m_passWord;     //登陆数据库密码
-    string m_databaseName; //使用数据库名
-    int m_sql_num;
+    // ----- 连接与状态管理 -----
+    void SendError_(int fd, const char* info); // 连接极其异常时的底层报错
+    void CloseConn_(HttpConn* client);         // 安全关闭连接，从 Epoll 和字典中剔除
 
-    //线程池相关
-    threadpool<http_conn> *m_pool;
-    int m_thread_num;
+    // ----- 服务器基础配置 -----
+    int port_;
+    bool isClose_;                 // 服务器是否正在关闭
+    int timeoutMS_;                // 客户端多久不发数据就被踢掉
+    uint32_t listenEvent_;         // Listen Socket 的 Epoll 触发模式 (如 EPOLLIN)
+    uint32_t connEvent_;           // Client Socket 的 Epoll 触发模式 (如 EPOLLIN | EPOLLONESHOT | EPOLLET)
+    int listenFd_;                 // 服务器监听大门的 Socket 描述符
+    int optLinger_;                // 优雅关闭配置选项 (0 表示关，1 表示开)
 
-    //epoll_event相关
-    epoll_event events[MAX_EVENT_NUMBER];
+    // ----- 核心子系统 (使用 unique_ptr 绝对避免内存泄漏) -----
+    std::unique_ptr<Epoller> epoller_;
+    std::unique_ptr<ThreadPool> threadpool_;
+    
+    // ----- 路由中心 -----
+    HttpRouter router_;
 
-    int m_listenfd;
-    int m_OPT_LINGER;
-    int m_TRIGMode;
-    int m_LISTENTrigmode;
-    int m_CONNTrigmode;
-
-    //定时器相关
-    client_data *users_timer;
-    Utils utils;
+    // ----- 👥 全局客户端对象池 -----
+    // 这是一个极其关键的数据结构！
+    // 将底层的文件描述符 (FD) 映射到高层的 HttpConn 对象
+    std::unordered_map<int, HttpConn> users_;
 };
+
+#define MAX_FD 20000 //最大连接人数
+
 #endif

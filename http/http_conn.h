@@ -1,152 +1,75 @@
-#ifndef HTTPCONNECTION_H
-#define HTTPCONNECTION_H
-#include <unistd.h>
-#include <signal.h>
+#ifndef HTTP_CONN_H
+#define HTTP_CONN_H
+
 #include <sys/types.h>
-#include <sys/epoll.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <assert.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <pthread.h>
-#include <stdio.h>
+#include <sys/uio.h>     // 包含 struct iovec (分散/聚集 I/O)
+#include <arpa/inet.h>   // 包含 sockaddr_in
 #include <stdlib.h>
-#include <sys/mman.h>
-#include <stdarg.h>
 #include <errno.h>
-#include <sys/wait.h>
-#include <sys/uio.h>
-#include <map>
+#include <string>
+#include <atomic>
 
-#include "../lock/locker.h"
-#include "../CGImysql/sql_connection_pool.h"
-#include "../timer/lst_timer.h"
-#include "../log/log.h"
+#include "../buffer/buffer.h"
+#include "http_request.h"
+#include "http_response.h"
+#include "../router/router.h"
 
-class http_conn
-{
+class HttpConn {
 public:
-    static const int FILENAME_LEN = 200;
-    static const int READ_BUFFER_SIZE = 2048;
-    static const int WRITE_BUFFER_SIZE = 1024;
-    enum METHOD
-    {
-        GET = 0,
-        POST,
-        HEAD,
-        PUT,
-        DELETE,
-        TRACE,
-        OPTIONS,
-        CONNECT,
-        PATH
-    };
-    enum CHECK_STATE
-    {
-        CHECK_STATE_REQUESTLINE = 0,
-        CHECK_STATE_HEADER,
-        CHECK_STATE_CONTENT
-    };
-    enum HTTP_CODE
-    {
-        NO_REQUEST,
-        GET_REQUEST,
-        BAD_REQUEST,
-        NO_RESOURCE,
-        FORBIDDEN_REQUEST,
-        FILE_REQUEST,
-        INTERNAL_ERROR,
-        CLOSED_CONNECTION
-    };
-    enum LINE_STATUS
-    {
-        LINE_OK = 0,
-        LINE_BAD,
-        LINE_OPEN
-    };
+    HttpConn();
+    ~HttpConn();
 
-public:
-    http_conn() {}
-    ~http_conn() {}
+    // ----- 生命周期管理 -----
+    // 初始化一个新的客户端连接，传入 Socket FD 和客户端 IP 地址
+    void Init(int sockFd, const sockaddr_in& addr);
+    // 安全关闭当前连接，释放 FD 和映射的内存
+    void Close();
 
-public:
-    void init(int sockfd, const sockaddr_in &addr, char *, int, int, string user, string passwd, string sqlname);
-    void close_conn(bool real_close = true);
-    void process();
-    bool read_once();
-    bool write();
-    sockaddr_in *get_address()
-    {
-        return &m_address;
-    }
-    void initmysql_result(connection_pool *connPool);
-    int timer_flag;
-    int improv;
+    // ----- 核心 I/O 引擎 (与 Epoll 联动) -----
+    // 从网卡非阻塞地读取数据，存入 readBuff_
+    ssize_t Read(int* saveErrno);
+    // 将 writeBuff_ 和 零拷贝的 mmFile_ 非阻塞地轰炸给网卡
+    ssize_t Write(int* saveErrno);
 
+    // ----- 🚦 核心调度枢纽 -----
+    // 当 Read 完毕后调用此函数，串联 Request -> Router -> Response
+    bool Process(HttpRouter& router);
+
+    // 长连接时如何重置request
+    void ResetForKeepAlive();
+
+    // ----- 状态获取接口 -----
+    int GetFd() const;
+    int GetPort() const;
+    const char* GetIP() const;
+    bool IsKeepAlive() const;
+    
+    // 还需要给网卡发送多少字节？(Epoll 用它来判断是否要继续监听可写事件)
+    int ToWriteBytes() const { return iov_[0].iov_len + iov_[1].iov_len; }
+
+    // ----- 全局静态配置 -----
+    static bool isET;             // 是否开启 Epoll 的 ET (边缘触发) 模式
+    static std::string srcDir;    // 网站的物理根目录路径
+    static std::atomic<int> userCount; // 线程安全的当前在线并发连接数
+    
 
 private:
-    void init();
-    HTTP_CODE process_read();
-    bool process_write(HTTP_CODE ret);
-    HTTP_CODE parse_request_line(char *text);
-    HTTP_CODE parse_headers(char *text);
-    HTTP_CODE parse_content(char *text);
-    HTTP_CODE do_request();
-    char *get_line() { return m_read_buf + m_start_line; };
-    LINE_STATUS parse_line();
-    void unmap();
-    bool add_response(const char *format, ...);
-    bool add_content(const char *content);
-    bool add_status_line(int status, const char *title);
-    bool add_headers(int content_length);
-    bool add_content_type();
-    bool add_content_length(int content_length);
-    bool add_linger();
-    bool add_blank_line();
+    // 网络基础属性
+    int fd_;                      // 客户端的 Socket 描述符
+    struct sockaddr_in addr_;     // 客户端的 IP 和端口信息
+    bool isClose_;                // 标记该连接是否已经被关闭
 
-public:
-    static int m_epollfd;
-    static int m_user_count;
-    MYSQL *mysql;
-    int m_state;  //读为0, 写为1
+    // 分散/聚集 I/O 核心结构 (配合 writev)
+    int iovCnt_;                  // 有几个内存块需要发送 (通常是 2 个)
+    struct iovec iov_[2];         // iov_[0] 存响应头，iov_[1] 存 mmap 映射的响应体文件
 
-private:
-    int m_sockfd;
-    sockaddr_in m_address;
-    char m_read_buf[READ_BUFFER_SIZE];
-    long m_read_idx;
-    long m_checked_idx;
-    int m_start_line;
-    char m_write_buf[WRITE_BUFFER_SIZE];
-    int m_write_idx;
-    CHECK_STATE m_check_state;
-    METHOD m_method;
-    char m_real_file[FILENAME_LEN];
-    char *m_url;
-    char *m_version;
-    char *m_host;
-    long m_content_length;
-    bool m_linger;
-    char *m_file_address;
-    struct stat m_file_stat;
-    struct iovec m_iv[2];
-    int m_iv_count;
-    int cgi;        //是否启用的POST
-    char *m_string; //存储请求头数据
-    int bytes_to_send;
-    int bytes_have_send;
-    char *doc_root;
+    // 收发缓冲区
+    Buffer readBuff_;             // 读缓冲区 (吸收客户端发来的请求报文)
+    Buffer writeBuff_;            // 写缓冲区 (存放 HttpResponse 组装好的响应头部)
 
-    map<string, string> m_users;
-    int m_TRIGMode;
-    int m_close_log;
-
-    char sql_user[100];
-    char sql_passwd[100];
-    char sql_name[100];
+    // HTTP 核心处理模块
+    HttpRequest request_;         // 负责解析 readBuff_
+    HttpResponse response_;       // 负责组装响应至 writeBuff_ 和 mmap
 };
 
 #endif

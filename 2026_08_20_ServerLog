@@ -1,0 +1,457 @@
+2026-08-20 18:28:53.157701 [info]: Starting log: 2026_08_20_ServerLog
+2026-08-20 18:28:53.163627 [info]: Socket listening...
+2026-08-20 18:28:53.164074 [info]: ========== Server started! Port: 9006 ==========
+2026-08-20 18:28:59.466755 [info]: New client fd = 14
+2026-08-20 18:28:59.467415 [info]: Client 14 requesting
+2026-08-20 18:28:59.467574 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:28:59.468058 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:28:59.468421 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.1
+2026-08-20 18:28:59.469024 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:28:59.469242 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:28:59.469573 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:28:59.469578 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:28:59.470143 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:28:59.470148 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:28:59.470758 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:28:59.470763 [info]: [DEBUG] HttpRequest: parsingline: Sec-Purpose: prefetch;prerender
+2026-08-20 18:28:59.471343 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:28:59.471661 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: none
+2026-08-20 18:28:59.471948 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:28:59.471952 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:28:59.472507 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:28:59.472512 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:28:59.473042 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:28:59.473046 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:28:59.473591 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:28:59.475360 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:28:59.475398 [info]: Responding to client 14
+2026-08-20 18:28:59.475698 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:28:59.727407 [info]: New client fd = 15
+2026-08-20 18:29:06.188751 [info]: Client 14 requesting
+2026-08-20 18:29:06.188847 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:06.189521 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:06.189922 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:06.190191 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:06.190713 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:06.190718 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:06.191388 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:06.191393 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:06.191395 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:06.192308 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:06.192314 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:06.192956 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:06.192962 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:06.193585 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:06.193590 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:06.193592 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:06.194561 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:06.194991 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:06.195391 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:06.195781 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:06.195787 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:06.195789 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:06.196794 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:06.196813 [info]: Logining user3 123456
+2026-08-20 18:29:06.198253 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:06.198756 [info]: [DEBUG] Respongse json!!! content: {"status":"error", "msg":"Invalid login"}
+2026-08-20 18:29:06.199161 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:06.199209 [info]: Responding to client 14
+2026-08-20 18:29:06.199869 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:06.201143 [info]: Client 15 requesting
+2026-08-20 18:29:06.201195 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:06.201638 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:06.202060 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:06.202784 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:06.203221 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:06.203226 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:06.203835 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:06.203840 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:06.204394 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:06.204399 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:06.204925 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:06.204930 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:06.205452 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:06.205457 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:06.205991 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:06.205996 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:06.206539 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:06.206812 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:06.206817 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:06.207374 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:06.207693 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:06.207700 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:06.208355 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:06.208371 [info]: Logining user3 123456
+2026-08-20 18:29:06.209275 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:06.209294 [info]: [DEBUG] Respongse json!!! content: {"status":"error", "msg":"Invalid login"}
+2026-08-20 18:29:06.209299 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:06.209332 [info]: Responding to client 15
+2026-08-20 18:29:06.210218 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:12.963198 [info]: Client 15 requesting
+2026-08-20 18:29:12.963287 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:12.963903 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:12.964319 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.1
+2026-08-20 18:29:12.964564 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:12.965059 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:12.965065 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:12.965860 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:12.965866 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:12.966666 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:12.966675 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:12.967432 [info]: [DEBUG] HttpRequest: parsingline: Sec-Purpose: prefetch;prerender
+2026-08-20 18:29:12.967826 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:12.967832 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: none
+2026-08-20 18:29:12.968467 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:12.968473 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:12.969201 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:12.969580 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:12.970022 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:12.970038 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:12.970696 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:12.973135 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:12.973205 [info]: Responding to client 15
+2026-08-20 18:29:12.973885 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:21.620347 [info]: New client fd = 14
+2026-08-20 18:29:21.620424 [info]: Client 14 requesting
+2026-08-20 18:29:21.620784 [info]: New client fd = 15
+2026-08-20 18:29:21.620475 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:21.621729 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:21.622499 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:21.622977 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:21.624006 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:21.624706 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:21.624710 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:21.625368 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:21.625373 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:21.626006 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:21.626382 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:21.626775 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:21.626781 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:21.627410 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:21.627718 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:21.627724 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:21.628315 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:21.628325 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:21.628926 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:21.628931 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:21.629461 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:21.629465 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:21.629991 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:21.630005 [info]: Logining user3 abc123
+2026-08-20 18:29:21.630888 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:21.630907 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:29:21.631178 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:21.631204 [info]: Responding to client 14
+2026-08-20 18:29:21.631720 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:21.880429 [info]: New client fd = 14
+2026-08-20 18:29:41.219499 [info]: New client fd = 14
+2026-08-20 18:29:41.219570 [info]: Client 14 requesting
+2026-08-20 18:29:41.219656 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:41.221083 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:41.221573 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.1
+2026-08-20 18:29:41.221822 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:41.222477 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:41.222482 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:41.223061 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:41.223066 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:41.223588 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:41.223594 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:41.224217 [info]: [DEBUG] HttpRequest: parsingline: Sec-Purpose: prefetch;prerender
+2026-08-20 18:29:41.224221 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:41.224745 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: none
+2026-08-20 18:29:41.224749 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:41.224751 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:41.225621 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:41.225632 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:41.226140 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:41.226145 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:41.226152 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:41.228991 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:41.229034 [info]: Responding to client 14
+2026-08-20 18:29:41.229347 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:41.487377 [info]: New client fd = 15
+2026-08-20 18:29:47.777948 [info]: Client 14 requesting
+2026-08-20 18:29:47.778042 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:47.778655 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:47.779014 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:47.779268 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:47.779793 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:47.780124 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:47.780469 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:47.780474 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:47.781126 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:47.781133 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:47.781756 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:47.782045 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:47.782350 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:47.782355 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:47.782913 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:47.783203 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:47.783208 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:47.783905 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:47.783912 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:47.784640 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:47.785020 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:47.785025 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:47.785661 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:47.786163 [info]: Logining user3 abc123
+2026-08-20 18:29:47.786983 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:47.787024 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:29:47.787575 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:47.787639 [info]: Responding to client 14
+2026-08-20 18:29:47.788198 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:47.789126 [info]: Client 15 requesting
+2026-08-20 18:29:47.789179 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:47.789476 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:47.789787 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:47.790441 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:47.790562 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:47.790913 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:47.790919 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:47.790921 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:47.791902 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:47.792201 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:47.792489 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:47.792494 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:47.793082 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:47.793088 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:47.793608 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:47.793613 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:47.794169 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:47.794173 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:47.794180 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:47.795081 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:47.795381 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:47.795386 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:47.796006 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:47.796023 [info]: Logining user3 abc123
+2026-08-20 18:29:47.797173 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:47.797823 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:29:47.798182 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:47.798217 [info]: Responding to client 15
+2026-08-20 18:29:47.798922 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:48.117493 [info]: New client fd = 14
+2026-08-20 18:29:48.117549 [info]: Client 14 requesting
+2026-08-20 18:29:48.117580 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:48.117612 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:29:48.117617 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:29:48.117876 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:29:48.120186 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:29:48.120192 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:29:48.120772 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:29:48.120777 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:29:48.121342 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:29:48.121348 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:29:48.121920 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:29:48.121925 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:29:48.122500 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:29:48.122505 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:29:48.123099 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:29:48.123106 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:29:48.123697 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:29:48.123702 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:29:48.124271 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:29:48.124276 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:29:48.124835 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:29:48.124840 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:29:48.125459 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:29:48.125473 [info]: Logining user3 abc123
+2026-08-20 18:29:48.126483 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:29:48.126504 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:29:48.126514 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:29:48.127122 [info]: Responding to client 14
+2026-08-20 18:29:48.127398 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:29:48.364208 [info]: New client fd = 14
+2026-08-20 18:35:49.939242 [info]: Starting log: 2026_08_20_ServerLog
+2026-08-20 18:35:49.945375 [info]: Socket listening...
+2026-08-20 18:35:49.945642 [info]: ========== Server started! Port: 9006 ==========
+2026-08-20 18:35:55.180462 [info]: New client fd = 14
+2026-08-20 18:35:55.181322 [info]: Client 14 requesting
+2026-08-20 18:35:55.181514 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:35:55.181952 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:35:55.182363 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.1
+2026-08-20 18:35:55.182950 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:35:55.182973 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:35:55.183277 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:35:55.183281 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:35:55.183871 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:35:55.183875 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:35:55.184478 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:35:55.184483 [info]: [DEBUG] HttpRequest: parsingline: Sec-Purpose: prefetch;prerender
+2026-08-20 18:35:55.185083 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:35:55.185088 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: none
+2026-08-20 18:35:55.185646 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:35:55.185651 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:35:55.186177 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:35:55.186181 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:35:55.186788 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:35:55.187121 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:35:55.187130 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:35:55.189303 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:35:55.189355 [info]: Responding to client 14
+2026-08-20 18:35:55.189674 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:35:55.443831 [info]: New client fd = 15
+2026-08-20 18:36:03.792936 [info]: Client 14 requesting
+2026-08-20 18:36:03.793044 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:03.793712 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:36:03.794096 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:36:03.794431 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:36:03.794924 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:36:03.795298 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:36:03.795662 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:36:03.796019 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:36:03.796025 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:36:03.796751 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:36:03.796756 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:36:03.796759 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:36:03.797739 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:36:03.798067 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:36:03.798072 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:36:03.798728 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:36:03.799066 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:36:03.799078 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:36:03.799844 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:36:03.799871 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:36:03.800579 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:36:03.800938 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:36:03.800942 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:36:03.801780 [info]: Logining user3 abc123
+2026-08-20 18:36:03.803162 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:36:03.803198 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:36:03.803203 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:36:03.803248 [info]: Responding to client 14
+2026-08-20 18:36:03.804395 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:08.962687 [info]: Client 14 requesting
+2026-08-20 18:36:08.962779 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:08.963432 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:36:08.963826 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.1
+2026-08-20 18:36:08.964534 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:36:08.964662 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:36:08.964667 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:36:08.965457 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:36:08.965863 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:36:08.965869 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:36:08.965872 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:36:08.965875 [info]: [DEBUG] HttpRequest: parsingline: Sec-Purpose: prefetch;prerender
+2026-08-20 18:36:08.967131 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:36:08.967432 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: none
+2026-08-20 18:36:08.967436 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:36:08.968150 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:36:08.968158 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:36:08.968162 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:36:08.969078 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:36:08.969099 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:36:08.969990 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:36:08.973089 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:36:08.973167 [info]: Responding to client 14
+2026-08-20 18:36:08.973572 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:12.636864 [info]: Client 14 requesting
+2026-08-20 18:36:12.636955 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:12.637867 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:36:12.638346 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:36:12.638601 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:36:12.639028 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:36:12.639032 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:36:12.639628 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:36:12.639633 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:36:12.640226 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:36:12.640231 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:36:12.640234 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:36:12.641113 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:36:12.641118 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:36:12.641733 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:36:12.642101 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:36:12.642618 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:36:12.643007 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:36:12.643021 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:36:12.643665 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:36:12.644079 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:36:12.644088 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:36:12.644886 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:36:12.645187 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:36:12.645203 [info]: Logining user1 123456
+2026-08-20 18:36:12.646137 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:36:12.646158 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:36:12.646456 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:36:12.646492 [info]: Responding to client 14
+2026-08-20 18:36:12.647102 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:16.466752 [info]: New client fd = 14
+2026-08-20 18:36:16.466879 [info]: New client fd = 15
+2026-08-20 18:36:59.420359 [info]: New client fd = 14
+2026-08-20 18:36:59.420470 [info]: New client fd = 15
+2026-08-20 18:36:59.421355 [info]: Client 14 requesting
+2026-08-20 18:36:59.421819 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:59.422350 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:36:59.422682 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:36:59.422949 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:36:59.423353 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:36:59.423700 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:36:59.424014 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:36:59.424019 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:36:59.424694 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:36:59.424699 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:36:59.425323 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:36:59.425328 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:36:59.425909 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:36:59.425914 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:36:59.426535 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:36:59.426540 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:36:59.427101 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:36:59.427110 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:36:59.427642 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:36:59.427647 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:36:59.428187 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:36:59.428191 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:36:59.428721 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:36:59.428736 [info]: Logining user1 123455
+2026-08-20 18:36:59.429646 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:36:59.429666 [info]: [DEBUG] Respongse json!!! content: {"status":"error", "msg":"Invalid login"}
+2026-08-20 18:36:59.429671 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:36:59.429698 [info]: Responding to client 14
+2026-08-20 18:36:59.430550 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:36:59.682967 [info]: New client fd = 16
+2026-08-20 18:37:23.619344 [info]: New client fd = 14
+2026-08-20 18:37:23.619408 [info]: Client 14 requesting
+2026-08-20 18:37:23.619446 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:37:23.620325 [info]: New client fd = 15
+2026-08-20 18:37:23.620640 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 18:37:23.620649 [info]: [DEBUG] HttpRequest: parsingline: POST /api/login HTTP/1.1
+2026-08-20 18:37:23.621909 [info]: [DEBUG] HttpRequest: parsingline: Host: localhost:9006
+2026-08-20 18:37:23.621984 [info]: [DEBUG] HttpRequest: parsingline: Connection: keep-alive
+2026-08-20 18:37:23.621989 [info]: [DEBUG] HttpRequest: parsingline: Content-Length: 26
+2026-08-20 18:37:23.622670 [info]: [DEBUG] HttpRequest: parsingline: Cache-Control: max-age=0
+2026-08-20 18:37:23.622675 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua: "Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+2026-08-20 18:37:23.623280 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-mobile: ?0
+2026-08-20 18:37:23.623286 [info]: [DEBUG] HttpRequest: parsingline: sec-ch-ua-platform: "Windows"
+2026-08-20 18:37:23.623900 [info]: [DEBUG] HttpRequest: parsingline: Upgrade-Insecure-Requests: 1
+2026-08-20 18:37:23.623905 [info]: [DEBUG] HttpRequest: parsingline: Content-Type: application/x-www-form-urlencoded
+2026-08-20 18:37:23.624513 [info]: [DEBUG] HttpRequest: parsingline: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
+2026-08-20 18:37:23.624518 [info]: [DEBUG] HttpRequest: parsingline: Origin: http://localhost:9006
+2026-08-20 18:37:23.625309 [info]: [DEBUG] HttpRequest: parsingline: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2026-08-20 18:37:23.625676 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Site: same-origin
+2026-08-20 18:37:23.626047 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Mode: navigate
+2026-08-20 18:37:23.626052 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-User: ?1
+2026-08-20 18:37:23.626695 [info]: [DEBUG] HttpRequest: parsingline: Sec-Fetch-Dest: document
+2026-08-20 18:37:23.626700 [info]: [DEBUG] HttpRequest: parsingline: Referer: http://localhost:9006/
+2026-08-20 18:37:23.627298 [info]: [DEBUG] HttpRequest: parsingline: Accept-Encoding: gzip, deflate, br, zstd
+2026-08-20 18:37:23.627304 [info]: [DEBUG] HttpRequest: parsingline: Accept-Language: zh-CN,zh;q=0.9
+2026-08-20 18:37:23.627910 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 18:37:23.627926 [info]: Logining user1 123456
+2026-08-20 18:37:23.628915 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 18:37:23.629231 [info]: [DEBUG] Respongse json!!! content: {"status":"success", "msg":"Welcome!"}
+2026-08-20 18:37:23.629609 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 18:37:23.629766 [info]: Responding to client 14
+2026-08-20 18:37:23.630356 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 18:37:23.885270 [info]: New client fd = 16
+2026-08-20 23:03:06.214083 [info]: New client fd = 14
+2026-08-20 23:03:06.217968 [info]: Client 14 requesting
+2026-08-20 23:03:06.220244 [info]: [DEBUG] Thread pool: task running...
+2026-08-20 23:03:06.222044 [info]: --- [Debug] Read over, start parsing ---
+2026-08-20 23:03:06.222978 [info]: [DEBUG] HttpRequest: parsingline: GET / HTTP/1.0
+2026-08-20 23:03:06.225824 [info]: [DEBUG] HttpRequest: parsingline: Host: 127.0.0.1
+2026-08-20 23:03:06.225876 [info]: [DEBUG] HttpRequest: parsingline: Connection: close
+2026-08-20 23:03:06.225882 [info]: [DEBUG] HttpRequest: parsingline: 
+2026-08-20 23:03:06.226100 [info]: [DEBUG] HttpConn: full request, making response
+2026-08-20 23:03:06.250954 [info]: --- [Debug] Process success, triggering EPOLLOUT ---
+2026-08-20 23:03:06.251150 [info]: Responding to client 14
+2026-08-20 23:03:06.252524 [info]: [DEBUG] Thread pool: task running...
